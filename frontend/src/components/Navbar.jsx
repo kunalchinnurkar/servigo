@@ -1,9 +1,19 @@
+import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 4);
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   function handleLogout() {
     logout();
@@ -13,7 +23,7 @@ export default function Navbar() {
   const base = user?.role === "provider" ? "/provider" : "/customer";
 
   return (
-    <nav className="navbar">
+    <nav className={"navbar" + (scrolled ? " is-scrolled" : "")}>
       <NavLink to={user ? base : "/"} className="navbar__brand">
         ServiGo
       </NavLink>
